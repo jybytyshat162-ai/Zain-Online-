@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>زين أون لاين - لوحة الإدارة</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <style>
+        /* ستايل قائمة المحادثات الشبيه بالواتساب */
+        .chat-list-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 15px;
+            max-height: 450px;
+            overflow-y: auto;
+        }
+        .user-chat-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #fff;
+            padding: 12px 15px;
+            border-radius: 10px;
+            border: 1px solid #eaeaea;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .user-chat-item:hover {
+            background: #f7f9fb;
+            border-color: #27ae60;
+            transform: translateY(-2px);
+        }
+        .user-info-side {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background: #e8f5e9;
+            color: #27ae60;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .user-details h4 {
+            margin: 0 0 4px 0;
+            font-size: 15px;
+            color: #333;
+        }
+        .user-details p {
+            margin: 0;
+            font-size: 12px;
+            color: #777;
+        }
+        .badge-counter {
+            background: #e74c3c;
+            color: #fff;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 20px;
+            min-width: 15px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(231,76,60,0.3);
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h2>زين أون لاين - لوحة التحكم</h2>
+</header>
+
+<main>
+    <section id="upload" class="page active">
+        <div class="card">
+            <h3>إضافة منتج جديد</h3>
+            <input id="productName" type="text" placeholder="اسم المنتج">
+            
+            <select id="category">
+                <option>اختر الصنف</option>
+                <option>اكسسوارات سيارات</option>
+                <option>اكسسوارات دراجات</option>
+                <option>إضاءة</option>
+                <option>زيوت</option>
+            </select>
+            
+            <input id="quantity" type="number" placeholder="الكمية">
+            <input id="price" type="number" placeholder="السعر بالريال اليمني">
+            <textarea id="description" placeholder="وصف المنتج"></textarea>
+            
+            <div class="images-upload">
+                <p>رفع 3 صور للمنتج (سيتم تخطيها تلقائياً إذا واجهت مشكلة)</p>
+                <input id="image1" type="file" accept="image/*">
+                <input id="image2" type="file" accept="image/*">
+                <input id="image3" type="file" accept="image/*">
+            </div>
+            
+            <button id="uploadBtn" class="btn">رفع المنتج</button>
+        </div>
+    </section>
+
+    <section id="products" class="page">
+        <div class="search-box">
+            <input id="searchInp" type="text" placeholder="ابحث باسم المنتج أو الصنف...">
+        </div>
+        <div id="productsContainer">
+            <p style="text-align:center; color:#888;">جاري تحميل المنتجات من السيرفر...</p>
+        </div>
+    </section>
+
+    <!-- ================= قسم قائمة المحادثات (الواتساب) المطور لـ كبار زبائن المتجر ================= -->
+    <section id="chat" class="page">
+        <div class="card">
+            <h3>محادثات زبائن المتجر الواردة 💬</h3>
+            <p style="font-size: 13px; color: #666;">اضغط على أي زبون لفتح المحادثة الفردية معه في صفحة مستقلة والرد عليه:</p>
+            
+            <div id="chatListContainer" class="chat-list-container">
+                <p style="text-align:center; color:#888; margin: 30px auto;">جاري فحص وتحديث قائمة المحادثات الحية...</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="settings" class="page">
+        <div class="card">
+            <h3>الإعدادات الإحصائية</h3>
+            <div class="setting-item">
+                <span>عدد المنتجات المرفوعة</span>
+                <strong id="totalProductsCount">0</strong>
+            </div>
+            <div class="setting-item">
+                <span>عدد الزوار</span>
+                <strong id="siteVisitorsCount">0</strong>
+            </div>
+            
+            <div style="margin-top:15px">
+                <h4>إضافة طريقة دفع محلي</h4>
+                <input id="payName" type="text" placeholder="اسم المحفظة (جوال، نجم...)">
+                <input id="payNumber" type="text" placeholder="رقم الحساب">
+                <input id="payLogo" type="file" accept="image/*">
+                <button id="savePayBtn" class="btn">حفظ طريقة الدفع</button>
+            </div>
+
+            <div class="payment-list">
+                <h4>طرق الدفع الحالية بالموقع:</h4>
+                <div id="paymentsContainer">
+                    <p style="font-size:13px; color:#888;">جاري تحميل طرق الدفع...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<div id="editModal" class="modal">
+    <div class="modal-content card">
+        <h3>تعديل بيانات المنتج</h3>
+        <input id="editProductName" type="text" placeholder="اسم المنتج">
+        
+        <select id="editCategory">
+            <option>اكسسوارات سيارات</option>
+            <option>اكسسوارات دراجات</option>
+            <option>إضاءة</option>
+            <option>زيوت</option>
+        </select>
+        
+        <input id="editQuantity" type="number" placeholder="الكمية">
+        <input id="editPrice" type="number" placeholder="السعر بالريال اليمني">
+        <textarea id="editDescription" placeholder="وصف المنتج"></textarea>
+        
+        <div class="images-upload">
+            <p style="font-size: 12px; color: #e67e22;">اختياري: اختر صوراً جديدة فقط إذا كنت ترغب في استبدال الصور الحالية</p>
+            <input id="editImage1" type="file" accept="image/*">
+            <input id="editImage2" type="file" accept="image/*">
+            <input id="editImage3" type="file" accept="image/*">
+        </div>
+        
+        <div class="modal-actions">
+            <button id="closeModalBtn" class="modal-close-btn">إلغاء</button>
+            <button id="saveEditBtn" class="modal-save-btn">حفظ التغييرات</button>
+        </div>
+    </div>
+</div>
+
+<nav class="bottom-nav">
+    <button class="nav-btn active" data-page="upload">
+        <span class="material-symbols-rounded">add_box</span>
+        <span>رفع</span>
+    </button>
+    <button class="nav-btn" data-page="products">
+        <span class="material-symbols-rounded">inventory_2</span>
+        <span>المنتجات</span>
+    </button>
+    <button class="nav-btn" data-page="chat">
+        <span class="material-symbols-rounded">chat</span>
+        <span>الدردشة</span>
+    </button>
+    <button class="nav-btn" data-page="settings">
+        <span class="material-symbols-rounded">settings</span>
+        <span>الإعدادات</span>
+    </button>
+</nav>
+
+<script type="module" src="script.js?v=21"></script>
+
+</body>
+</html>
