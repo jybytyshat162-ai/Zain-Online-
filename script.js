@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 
-// ================= دالة الرفع الذكي (البيانات + تخطي صور إذا تعطلت) =================
+// ================= دالة الرفع الذكي (البيانات + روابط الصور) =================
 const uploadBtn = document.getElementById("uploadBtn");
 if (uploadBtn) {
     uploadBtn.addEventListener("click", uploadProduct);
@@ -53,9 +53,10 @@ async function uploadProduct() {
     const price = document.getElementById("price").value;
     const description = document.getElementById("description").value.trim();
     
-    const imgInp1 = document.getElementById("image1").files[0];
-    const imgInp2 = document.getElementById("image2").files[0];
-    const imgInp3 = document.getElementById("image3").files[0];
+    // الحصول على روابط الصور بدلاً من الملفات
+    const url1 = document.getElementById("image1").value.trim();
+    const url2 = document.getElementById("image2").value.trim();
+    const url3 = document.getElementById("image3").value.trim();
     
     if (!name || !price || !quantity || !description || category === "اختر الصنف") {
         alert("يرجى تعبئة كافة الحقول واختيار الصنف بشكل صحيح.");
@@ -63,33 +64,12 @@ async function uploadProduct() {
     }
     
     uploadBtn.disabled = true;
-    uploadBtn.innerText = "جاري الحفظ والرفع للسيرفر...";
+    uploadBtn.innerText = "جاري الحفظ للسيرفر...";
     
-    let url1 = "https://placehold.co/150?text=No+Image";
-    let url2 = "https://placehold.co/150?text=No+Image";
-    let url3 = "https://placehold.co/150?text=No+Image";
-    
-    if (imgInp1) {
-        try {
-            const storageRef = sRef(storage, 'products/' + Date.now() + '_1.jpg');
-            const snapshot = await uploadBytes(storageRef, imgInp1);
-            url1 = await getDownloadURL(snapshot.ref);
-        } catch (e) { console.log("تم تخطي الصورة الأولى بنجاح"); }
-    }
-    if (imgInp2) {
-        try {
-            const storageRef = sRef(storage, 'products/' + Date.now() + '_2.jpg');
-            const snapshot = await uploadBytes(storageRef, imgInp2);
-            url2 = await getDownloadURL(snapshot.ref);
-        } catch (e) { console.log("تم تخطي الصورة الثانية بنجاح"); }
-    }
-    if (imgInp3) {
-        try {
-            const storageRef = sRef(storage, 'products/' + Date.now() + '_3.jpg');
-            const snapshot = await uploadBytes(storageRef, imgInp3);
-            url3 = await getDownloadURL(snapshot.ref);
-        } catch (e) { console.log("تم تخطي الصورة الثالثة بنجاح"); }
-    }
+    // استخدام الروابط مباشرة بدون رفع للمخزن
+    const finalUrl1 = url1 || "https://placehold.co/150?text=No+Image";
+    const finalUrl2 = url2 || "https://placehold.co/150?text=No+Image";
+    const finalUrl3 = url3 || "https://placehold.co/150?text=No+Image";
     
     try {
         const productsRef = ref(db, 'products');
@@ -101,9 +81,9 @@ async function uploadProduct() {
             quantity: Number(quantity),
             price: Number(price),
             description: description,
-            image1: url1,
-            image2: url2,
-            image3: url3,
+            image1: finalUrl1,
+            image2: finalUrl2,
+            image3: finalUrl3,
             createdAt: Date.now()
         });
         
@@ -246,9 +226,10 @@ async function saveProductEdits() {
     const price = document.getElementById("editPrice").value;
     const description = document.getElementById("editDescription").value.trim();
     
-    const file1 = document.getElementById("editImage1").files[0];
-    const file2 = document.getElementById("editImage2").files[0];
-    const file3 = document.getElementById("editImage3").files[0];
+    // الحصول على الروابط الجديدة (اختيارية)
+    const newUrl1 = document.getElementById("editImage1").value.trim();
+    const newUrl2 = document.getElementById("editImage2").value.trim();
+    const newUrl3 = document.getElementById("editImage3").value.trim();
     
     if (!name || !price || !quantity || !description) {
         alert("يرجى تعبئة كافة الحقول النصية.");
@@ -260,31 +241,10 @@ async function saveProductEdits() {
     
     const currentProduct = allProducts.find(p => p.id === currentEditingId);
     
-    let url1 = currentProduct.image1;
-    let url2 = currentProduct.image2;
-    let url3 = currentProduct.image3;
-    
-    if (file1) {
-        try {
-            const storageRef = sRef(storage, 'products/' + Date.now() + '_1.jpg');
-            const snapshot = await uploadBytes(storageRef, file1);
-            url1 = await getDownloadURL(snapshot.ref);
-        } catch (e) { console.log("تم تخطي تعديل الصورة 1"); }
-    }
-    if (file2) {
-        try {
-            const storageRef = sRef(storage, 'products/' + Date.now() + '_2.jpg');
-            const snapshot = await uploadBytes(storageRef, file2);
-            url2 = await getDownloadURL(snapshot.ref);
-        } catch (e) { console.log("تم تخطي تعديل الصورة 2"); }
-    }
-    if (file3) {
-        try {
-            const storageRef = sRef(storage, 'products/' + Date.now() + '_3.jpg');
-            const snapshot = await uploadBytes(storageRef, file3);
-            url3 = await getDownloadURL(snapshot.ref);
-        } catch (e) { console.log("تم تخطي تعديل الصورة 3"); }
-    }
+    // استخدام الروابط الجديدة إذا تم إدخالها، وإلا الاحتفاظ بالروابط الحالية
+    let url1 = newUrl1 || currentProduct.image1;
+    let url2 = newUrl2 || currentProduct.image2;
+    let url3 = newUrl3 || currentProduct.image3;
     
     try {
         const productUpdateRef = ref(db, 'products/' + currentEditingId);

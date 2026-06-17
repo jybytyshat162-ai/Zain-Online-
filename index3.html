@@ -8,66 +8,77 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
     <style>
-        /* ستايل قائمة المحادثات الشبيه بالواتساب */
-        .chat-list-container {
+        /* ستايل سريع وخفيف مخصص لجعل واجهة المحادثة تبدو احترافية للغاية داخل الكرت */
+        .chat-container {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            margin-top: 15px;
-            max-height: 450px;
+            height: 400px;
+            background: #fdfdfd;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
             overflow-y: auto;
-        }
-        .user-chat-item {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #fff;
-            padding: 12px 15px;
-            border-radius: 10px;
-            border: 1px solid #eaeaea;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .user-chat-item:hover {
+            flex-direction: column;
+            gap: 10px;
             background: #f7f9fb;
-            border-color: #27ae60;
-            transform: translateY(-2px);
         }
-        .user-info-side {
-            display: flex;
-            align-items: center;
-            gap: 12px;
+        .chat-bubble {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.5;
+            word-wrap: break-word;
+            white-space: pre-line;
         }
-        .user-avatar {
-            width: 45px;
-            height: 45px;
-            background: #e8f5e9;
-            color: #27ae60;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .user-details h4 {
-            margin: 0 0 4px 0;
-            font-size: 15px;
-            color: #333;
-        }
-        .user-details p {
-            margin: 0;
-            font-size: 12px;
-            color: #777;
-        }
-        .badge-counter {
-            background: #e74c3c;
+        .chat-bubble.admin {
+            background-color: #27ae60;
             color: #fff;
-            font-size: 11px;
+            align-self: flex-start;
+            border-bottom-right-radius: 2px;
+        }
+        .chat-bubble.client {
+            background-color: #ebf5fb;
+            color: #333;
+            align-self: flex-end;
+            border-bottom-left-radius: 2px;
+            border: 1px solid #d4e6f1;
+        }
+        .chat-input-area {
+            display: flex;
+            padding: 10px;
+            background: #fff;
+            border-top: 1px solid #eee;
+            gap: 8px;
+        }
+        .chat-input-area input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 14px;
+            outline: none;
+        }
+        .chat-input-area button {
+            padding: 0 20px;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
             font-weight: bold;
-            padding: 3px 8px;
-            border-radius: 20px;
-            min-width: 15px;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(231,76,60,0.3);
+            transition: 0.2s;
+        }
+        .chat-input-area button:hover {
+            background: #219653;
         }
     </style>
 </head>
@@ -96,10 +107,10 @@
             <textarea id="description" placeholder="وصف المنتج"></textarea>
             
             <div class="images-upload">
-                <p>أدخل روابط 3 صور للمنتج (من أي موقع استضافة مثل Imgur أو Google Drive)</p>
-                <input id="image1" type="text" placeholder="رابط الصورة الأولى" dir="ltr">
-                <input id="image2" type="text" placeholder="رابط الصورة الثانية" dir="ltr">
-                <input id="image3" type="text" placeholder="رابط الصورة الثالثة" dir="ltr">
+                <p>رفع 3 صور للمنتج (سيتم تخطيها تلقائياً إذا واجهت مشكلة)</p>
+                <input id="image1" type="file" accept="image/*">
+                <input id="image2" type="file" accept="image/*">
+                <input id="image3" type="file" accept="image/*">
             </div>
             
             <button id="uploadBtn" class="btn">رفع المنتج</button>
@@ -115,14 +126,23 @@
         </div>
     </section>
 
-    <!-- ================= قسم قائمة المحادثات (الواتساب) المطور لـ كبار زبائن المتجر ================= -->
+    <!-- ================= تم تعديل واجهة هذا القسم بالكامل لتفعيل الدردشة الحية ================= -->
     <section id="chat" class="page">
         <div class="card">
-            <h3>محادثات زبائن المتجر الواردة 💬</h3>
-            <p style="font-size: 13px; color: #666;">اضغط على أي زبون لفتح المحادثة الفردية معه في صفحة مستقلة والرد عليه:</p>
+            <h3>مركز دردشة طلبات الزبائن الحية 💬</h3>
+            <p style="font-size: 13px; color: #666; margin-bottom: 10px;">هنا يمكنك استقبال طلبات الشراء الواردة من العملاء والرد عليهم فورياً:</p>
             
-            <div id="chatListContainer" class="chat-list-container">
-                <p style="text-align:center; color:#888; margin: 30px auto;">جاري فحص وتحديث قائمة المحادثات الحية...</p>
+            <div class="chat-container">
+                <!-- مكان ظهور الرسائل والطلبات المجلوبة من فايربيز -->
+                <div id="chatMessagesContainer" class="chat-messages">
+                    <p style="text-align:center; color:#888; margin:auto;">جاري جلب المحادثات والطلبات الحية...</p>
+                </div>
+                
+                <!-- صندوق إرسال الرد للعميل -->
+                <div class="chat-input-area">
+                    <input id="chatReplyInp" type="text" placeholder="اكتب ردك المباشر للزبون هنا...">
+                    <button id="sendReplyBtn">إرسال الرد</button>
+                </div>
             </div>
         </div>
     </section>
@@ -174,10 +194,10 @@
         <textarea id="editDescription" placeholder="وصف المنتج"></textarea>
         
         <div class="images-upload">
-            <p style="font-size: 12px; color: #e67e22;">اختياري: أدخل روابط صور جديدة لاستبدال الصور الحالية</p>
-            <input id="editImage1" type="text" placeholder="رابط الصورة الأولى (اختياري)" dir="ltr">
-            <input id="editImage2" type="text" placeholder="رابط الصورة الثانية (اختياري)" dir="ltr">
-            <input id="editImage3" type="text" placeholder="رابط الصورة الثالثة (اختياري)" dir="ltr">
+            <p style="font-size: 12px; color: #e67e22;">اختياري: اختر صوراً جديدة فقط إذا كنت ترغب في استبدال الصور الحالية</p>
+            <input id="editImage1" type="file" accept="image/*">
+            <input id="editImage2" type="file" accept="image/*">
+            <input id="editImage3" type="file" accept="image/*">
         </div>
         
         <div class="modal-actions">
@@ -206,7 +226,7 @@
     </button>
 </nav>
 
-<script type="module" src="script.js"></script>
+<script type="module" src="script.js?v=21"></script>
 
 </body>
 </html>
