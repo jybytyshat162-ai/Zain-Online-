@@ -289,7 +289,8 @@ if (savePayBtn) {
 async function savePaymentMethod() {
     const payName = document.getElementById("payName").value.trim();
     const payNumber = document.getElementById("payNumber").value.trim();
-    const logoFile = document.getElementById("payLogo").files[0];
+    // الحصول على رابط الصورة بدلاً من الملف
+    const logoUrlInput = document.getElementById("payLogo").value.trim();
     
     if(!payName || !payNumber) {
         alert("يرجى إدخال اسم المحفظة ورقم الحساب لحفظ طريقة الدفع.");
@@ -299,15 +300,8 @@ async function savePaymentMethod() {
     savePayBtn.disabled = true;
     savePayBtn.innerText = "جاري الحفظ...";
     
-    let logoUrl = "https://placehold.co/100?text=Payment";
-    
-    if (logoFile) {
-        try {
-            const storageRef = sRef(storage, 'payments/' + Date.now() + '_logo.jpg');
-            const snapshot = await uploadBytes(storageRef, logoFile);
-            logoUrl = await getDownloadURL(snapshot.ref);
-        } catch(e) { console.log("تم تخطي رفع شعار المحفظة"); }
-    }
+    // استخدام الرابط مباشرة أو صورة افتراضية
+    let logoUrl = logoUrlInput || "https://placehold.co/100?text=Payment";
     
     try {
         const paymentsRef = ref(db, 'payments');
